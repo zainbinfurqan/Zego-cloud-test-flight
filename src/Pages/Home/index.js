@@ -1,31 +1,27 @@
-import React, { useEffect } from 'react';
-import { zegoInstance } from '../../utils/zego-config';
-
-
+import React, { useEffect, useState } from 'react';
+import JoinCall from '../../components/modals/Join-call';
 
 function Home(props) {
-    const config = {
-        roomId: '00001',
-        token: '04AAAAAGMRLpUAEDQ0NmpkNXN2bmxpYnQ3eGUAoI+g69oSQgqfLjc2TEv6RxgWPF3kmcibkjx3dd6wPJBMnRFy3PB7qvReYsqwYZk7eW06DzkfLrY5V2ptBXsrHyrLFd+3ivLiwzjH/TfiJ/EfbZxxVubJIKSLuCQIbuOU/x0L5JT4wQnrVAoPU5ODGLJ5iqgzJpqLYLt9dvembrCl08bYLoqh96OWXjBy666dlWsB6iEnBIIcVmM8jB4DwoM=',
-        userID: '00000',
-        userName: 'zainahmed',
-    }
-    const instance = zegoInstance()
 
-    const creatRoom = async () => {
-        const result = await instance.checkSystemRequirements();
-        const stramRoom = await instance.loginRoom(config.roomId, config.token,
-            { userID: config.userID, userName: config.userName }, { userUpdate: true });
-        console.log("stramRoom", stramRoom)
+    const [isJoinCallPanelOpen, setIsJoinCallPanelOpen] = useState(false)
+    const [joinCallPanelProps, setJoinCallPanelProps] = useState({ title: '' })
+    const handleSelectCall = (obj, flag) => {
+        setJoinCallPanelProps(obj)
+        setIsJoinCallPanelOpen(flag)
     }
-    useEffect(() => {
-        creatRoom()
-    }, [instance])
+
+    const handleJoin = () => {
+        setIsJoinCallPanelOpen(!isJoinCallPanelOpen)
+    }
 
     return (
-        <div class="px-3 md:lg:xl:px-40   border-t border-b py-20 bg-opacity-10"
-        >
-            <div class="grid grid-cols-1 md:lg:xl:grid-cols-3 group bg-white shadow-xl shadow-neutral-100  ">
+        <div class="px-3 md:lg:xl:px-40   border-t border-b py-20 bg-opacity-10">
+            {isJoinCallPanelOpen && <JoinCall
+                handleClose={() => setIsJoinCallPanelOpen(!isJoinCallPanelOpen)}
+                handleJoin={handleJoin}
+                type={joinCallPanelProps.type}
+                title={joinCallPanelProps.title} />}
+            <div class="grid grid-cols-1 md:lg:xl:grid-cols-2 group bg-white shadow-xl shadow-neutral-100  ">
                 <div
                     class="p-10 flex flex-col items-center text-center group md:lg:xl:border-r md:lg:xl:border-b hover:bg-slate-50 cursor-pointer">
                     <span class="p-5 rounded-full bg-red-500 text-white shadow-lg shadow-red-200"><svg
@@ -34,9 +30,13 @@ function Home(props) {
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg></span>
-                    <p class="text-xl font-medium text-slate-700 mt-3">Most Experienced Team</p>
+                    <p class="text-xl font-medium text-slate-700 mt-3">Video Call</p>
                     <p class="mt-2 text-sm text-slate-500">Team BrainEdge education is a bunch of highly focused, energetic
                         set of people.</p>
+                    <div className='flex my-2 p-3 justify-around w-full'>
+                        <div onClick={() => handleSelectCall({ title: 'Make a video call', type: 'make' }, true,)} className='border p-2'><p>Make Video call</p></div>
+                        <div onClick={() => handleSelectCall({ title: 'Join a video call', type: 'join' }, true)} className='border p-2'><p>Join Video call</p></div>
+                    </div>
                 </div>
                 <div
                     class="p-10 flex flex-col items-center text-center group md:lg:xl:border-r md:lg:xl:border-b hover:bg-slate-50 cursor-pointer">
@@ -49,9 +49,12 @@ function Home(props) {
                         <line x1="16" y1="17" x2="8" y2="17"></line>
                         <polyline points="10 9 9 9 8 9"></polyline>
                     </svg></span>
-                    <p class="text-xl font-medium text-slate-700 mt-3">Best
-                        Test preparation</p>
+                    <p class="text-xl font-medium text-slate-700 mt-3">Audio Call</p>
                     <p class="mt-2 text-sm text-slate-500">Know where you stand and what next to do to succeed .</p>
+                    <div className='flex my-2  p-3 justify-around w-full'>
+                        <div onClick={() => handleSelectCall({ title: 'Make a Audio call', type: 'make' }, true)} className='border p-2'><p>Make Audio call</p></div>
+                        <div onClick={() => handleSelectCall({ title: 'Make a Audio call', type: 'join' }, true)} className='border p-2'><p>Join Audio call</p></div>
+                    </div>
                 </div>
             </div>
         </div>
