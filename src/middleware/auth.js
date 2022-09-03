@@ -1,11 +1,37 @@
 export const authMiddleware = {
 
     loginAndRegistration: async () => {
-        return true
+        try {
+            const response = await fetch('', {
+                method: 'POST',
+            });
+            const res = await response.json();
+            if (response.status === 200) {
+
+            } else {
+
+            }
+            return true
+        } catch (error) {
+
+        }
     },
 
     generateTokenForCalling: async () => {
-        return true
+        try {
+            const response = await fetch('', {
+                method: 'POST',
+            });
+            const res = await response.json();
+            if (response.status === 200) {
+
+            } else {
+
+            }
+            return true
+        } catch (error) {
+
+        }
     }
 
 }
