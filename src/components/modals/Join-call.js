@@ -18,7 +18,7 @@ function JoinCall(props) {
     // const [state, dispatch] = useReducer(reducer, initialState);
 
     const [configObj, setConfigObj] = useState({
-        server: props.type == 'make' ? Array(9).fill().map(() => ((Math.random() * 36) | 0).toString(36)).join('') : '',
+        roomId: props.type == 'make' ? Array(9).fill().map(() => ((Math.random() * 36) | 0).toString(36)).join('') : '',
     })
 
     const handleTextChange = (key, value) => {
@@ -35,9 +35,9 @@ function JoinCall(props) {
                     <div className="text-center p-5 flex-auto justify-center">
                         <div className='border my-2'>
                             <input
-                                onChange={(e) => handleTextChange('server', e.target.value)}
+                                onChange={(e) => handleTextChange('roomId', e.target.value)}
                                 disabled={props.type == 'make' ? true : false}
-                                value={configObj.server}
+                                value={configObj.roomId}
                                 type="text"
                                 className="w-full  leading-normal  border-0 h-10 border-grey-light rounded rounded-l-none px-3 self-center relative  font-roboto text-xl outline-none"
                                 placeholder="placeholder"
@@ -56,7 +56,7 @@ function JoinCall(props) {
                         <button onClick={props.handleClose} className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">
                             Cancel
                         </button>
-                        <button onClick={props.handleJoin} className="mb-2 md:mb-0 bg-red-500 border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
+                        <button onClick={() => props.handleJoinOrCreate({ roomId: configObj.roomId, type: props.type })} className="mb-2 md:mb-0 bg-red-500 border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
                             {props.type == 'make' ? 'Create' : 'Join'}
                         </button>
                     </div>

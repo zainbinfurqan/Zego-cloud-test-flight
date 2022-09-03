@@ -41,4 +41,18 @@ module.exports = {
             console.log(error)
         }
     },
+    zegoGenerateTokenForCreateCalling: async () => {
+        try {
+
+        } catch (error) {
+
+        }
+    },
+    zegoGetTokenByRoomIdForJoinCalling: async () => {
+        try {
+
+        } catch (error) {
+
+        }
+    }
 }

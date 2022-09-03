@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import JoinCall from '../../components/modals/Join-call';
+import { authMiddleware } from '../../middleware/auth';
+import { LocalStorageFN } from '../../utils/localstorage';
 
 function Home(props) {
 
@@ -10,15 +12,30 @@ function Home(props) {
         setIsJoinCallPanelOpen(flag)
     }
 
-    const handleJoin = () => {
-        setIsJoinCallPanelOpen(!isJoinCallPanelOpen)
+    const handleJoinOrCreate = async (data) => {
+        const tokenResponse = null
+        if (data.type == 'make') {
+            tokenResponse = await authMiddleware.generateTokenForCalling()
+            data.token = tokenResponse.token
+        } else {
+            tokenResponse = await authMiddleware.getTokenByRoomId()
+            data.token = tokenResponse.token
+        }
+        if (tokenResponse) {
+            setRoomAndTokenInLocal(data)
+            setIsJoinCallPanelOpen(!isJoinCallPanelOpen)
+        }
+    }
+
+    const setRoomAndTokenInLocal = (data) => {
+        LocalStorageFN.addToLocalStorage('zego-room-id', { roomId: data.roomId, token: data.token })
     }
 
     return (
         <div class="px-3 md:lg:xl:px-40   border-t border-b py-20 bg-opacity-10">
             {isJoinCallPanelOpen && <JoinCall
                 handleClose={() => setIsJoinCallPanelOpen(!isJoinCallPanelOpen)}
-                handleJoin={handleJoin}
+                handleJoinOrCreate={handleJoinOrCreate}
                 type={joinCallPanelProps.type}
                 title={joinCallPanelProps.title} />}
             <div class="grid grid-cols-1 md:lg:xl:grid-cols-2 group bg-white shadow-xl shadow-neutral-100  ">

@@ -6,86 +6,80 @@ function VideoCalling(props) {
 
     const users = [1]
 
-    // const instance = zegoInstance()
+    const instance = zegoInstance()
 
-    // const createRoom = async () => {
-    //     const result = await instance.checkSystemRequirements();
-    //     const streamRoom = await instance.loginRoom(
-    //         configurationObj.videoCallingConfigObj.roomId,
-    //         configurationObj.videoCallingConfigObj.token,
-    //         {
-    //             userID: configurationObj.videoCallingConfigObj.userID,
-    //             userName: configurationObj.videoCallingConfigObj.userName
-    //         },
-    //         { userUpdate: true });
+    const createRoom = async () => {
+        try {
+            await instance.checkSystemRequirements();
+            const streamRoom = await instance.loginRoom(
+                configurationObj.videoCallingConfigObj.roomId,
+                configurationObj.videoCallingConfigObj.token,
+                {
+                    userID: configurationObj.videoCallingConfigObj.userID,
+                    userName: configurationObj.videoCallingConfigObj.userName
+                });
 
-    //     // Callback for updates on the current user's room connection status.
-    //     instance.on('roomStateUpdate', (roomID, state, errorCode, extendedData) => {
-    //         if (state == 'DISCONNECTED') {
-    //             // Disconnected from the room
-    //         }
+            // console.log("streamRoom", streamRoom)
 
-    //         if (state == 'CONNECTING') {
-    //             // Connecting to the room
-    //         }
+            instance.on('roomUserUpdate', (roomID, updateType, userList) => {
+                console.warn(
+                    `roomUserUpdate: room ${roomID}, user ${updateType === 'ADD' ? 'added' : 'left'} `,
+                    JSON.stringify(userList),
+                );
+            });
 
-    //         if (state == 'CONNECTED') {
-    //             // Connected to the room
-    //         }
-    //     })
+            // Callback for updates on the status of the streams in the room.
+            instance.on('roomStreamUpdate', async (roomID, updateType, streamList, extendedData) => {
+                if (updateType == 'ADD') {
+                    // New stream added, start playing the stream. 
+                } else if (updateType == 'DELETE') {
+                    // Stream deleted, stop playing the stream.
+                }
+            });
 
-    //     // Callback for updates on the status of ther users in the room.
-    //     instance.on('roomUserUpdate', (roomID, updateType, userList) => {
-    //         console.warn(
-    //             `roomUserUpdate: room ${roomID}, user ${updateType === 'ADD' ? 'added' : 'left'} `,
-    //             JSON.stringify(userList),
-    //         );
-    //     });
+            const deviceInfo = await instance.enumDevices()
 
-    //     // Callback for updates on the status of the streams in the room.
-    //     instance.on('roomStreamUpdate', async (roomID, updateType, streamList, extendedData) => {
-    //         if (updateType == 'ADD') {
-    //             // New stream added, start playing the stream. 
-    //         } else if (updateType == 'DELETE') {
-    //             // Stream deleted, stop playing the stream.
-    //         }
-    //     });
+            // console.log("microphones", deviceInfo.microphones[0])
+            // console.log("cameras", deviceInfo.cameras[0])
 
-    //     // After calling the CreateStream method, you need to wait for the ZEGOCLOUD server to return the local stream object before any further operation.
-    //     // console.log("result", result)
-    //     // window.navigator.getUserMedia({ audio: true, video: true }, (stream) => {
-    //     //     console.log("stream", stream)
-    //     // })
-    //     const deviceInfo = await instance.enumDevices()
-    //     console.log("deviceInfo", deviceInfo.cameras)
-    //     const localStream = await instance.createStream({
-    //         camera: {
-    //             audioInput: '',
-    //             videoInput: '',
-    //             video: true,
-    //             audio: true,
-    //         }
-    //     });
-    //     // Get the audio tag.
-    //     const localVideo = document.getElementById('local-video-streaming-container');
-    //     // const localAudio = document.getElementById('local-audio');
-    //     // The local stream is a MediaStream object. You can render audio by assigning the local stream to the srcObject property of video or audio.
-    //     localVideo.srcObject = localStream;
-    //     instance.startPublishingStream(configurationObj.videoCallingConfigObj.streamId,
-    //         localStream,
-    //         { videoCodec: 'H264' })
-    //     const localView = instance.createLocalStreamView()
-    //     console.log("localStream", localStream)
-    //     // const localView = instance.createLocalStreamView(localStream);
-    //     // localView.play()
-    // }
-    // useEffect(() => {
-    //     createRoom()
-    // }, [])
+            const localStream = await instance.createStream({
+                camera: {
+                    audioInput: deviceInfo.microphones[0].deviceID,
+                    videoInput: deviceInfo.cameras[0].deviceID,
+                    video: true,
+                    audio: true,
+                }
+            });
+            // Get the audio tag.
+            const localVideo = document.getElementById('local-video-streaming-container');
+            // const localAudio = document.getElementById('local-audio');
+            // The local stream is a MediaStream object. You can render audio by assigning the local stream to the srcObject property of video or audio.
+            // localVideo.srcObject = localStream;
+            // console.log("localStream", localStream)
+            instance.startPublishingStream(configurationObj.videoCallingConfigObj.streamId,
+                localStream,
+                { videoCodec: 'VP8' })
+            // console.log("instance.getVersion()", instance.getVersion())
+            // const localView = instance.createLocalStreamView()
+            const localView = instance.createLocalStreamView(localStream);
+            // console.log("localView", localView)
+            localView.play("local-video-streaming-container", {
+                mirror: true,
+                objectFit: "cover",
+                enableAutoplayDialog: true,
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        createRoom()
+    }, [])
 
     return (
         <div className='h-screen'>
-            <div className='border p-3 text-center'>
+            {/* <div className='border p-3 text-center'>
                 <button onClick={props.handleJoin} className="mb-2 mx-2 md:mb-0  border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -133,7 +127,7 @@ function VideoCalling(props) {
                         />
                     </svg>
                 </button>
-            </div>
+            </div> */}
             {/* <div className={`${users.length == 1 && 'flex border h-full'} `}>
                 <div className={`
                 ${users.length == 1 && 'w-full h-full border'}
@@ -143,14 +137,12 @@ function VideoCalling(props) {
                 </div>
             </div> */}
 
-            {/* <div style={{
-                height: '100px',
-                width: '100px',
+            <div style={{
+                height: '500px',
+                width: '500px',
                 border: 'solid',
-            }} id='local-video-streaming-container'>
-
-            </div> */}
-        </div>
+            }} id='local-video-streaming-container' />
+        </div >
     );
 }
 
