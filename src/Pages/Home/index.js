@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import JoinCall from '../../components/modals/Join-call';
 import { authMiddleware } from '../../middleware/auth';
 import { LocalStorageFN } from '../../utils/localstorage';
 
 function Home(props) {
-
+    const history = useNavigate()
     const [isJoinCallPanelOpen, setIsJoinCallPanelOpen] = useState(false)
     const [joinCallPanelProps, setJoinCallPanelProps] = useState({ title: '' })
     const handleSelectCall = (obj, flag) => {
@@ -13,16 +14,22 @@ function Home(props) {
     }
 
     const handleJoinOrCreate = async (data) => {
-        const tokenResponse = null
+        console.log("data", data)
+        const tokenResponse = true
         if (data.type == 'make') {
-            tokenResponse = await authMiddleware.generateTokenForCalling()
-            data.token = tokenResponse.token
+            // tokenResponse = await authMiddleware.generateTokenForCalling()
+            // data.token = tokenResponse.token
         } else {
-            tokenResponse = await authMiddleware.getTokenByRoomId()
-            data.token = tokenResponse.token
+            // tokenResponse = await authMiddleware.getTokenByRoomId()
+            // data.token = tokenResponse.token
         }
         if (tokenResponse) {
-            setRoomAndTokenInLocal(data)
+            // history.push({
+            //     pathname: data.type == 'make' ? '/calling-video' : 'calling-audio',
+            //     state: { ...data }
+            // })
+            history(data.callingType == 'video' ? '/calling-video' : '/calling-audio', { state: { ...data } })
+            // setRoomAndTokenInLocal(data)
             setIsJoinCallPanelOpen(!isJoinCallPanelOpen)
         }
     }
@@ -37,6 +44,7 @@ function Home(props) {
                 handleClose={() => setIsJoinCallPanelOpen(!isJoinCallPanelOpen)}
                 handleJoinOrCreate={handleJoinOrCreate}
                 type={joinCallPanelProps.type}
+                callingType={joinCallPanelProps.callingType}
                 title={joinCallPanelProps.title} />}
             <div class="grid grid-cols-1 md:lg:xl:grid-cols-2 group bg-white shadow-xl shadow-neutral-100  ">
                 <div
@@ -51,8 +59,8 @@ function Home(props) {
                     <p class="mt-2 text-sm text-slate-500">Team BrainEdge education is a bunch of highly focused, energetic
                         set of people.</p>
                     <div className='flex my-2 p-3 justify-around w-full'>
-                        <div onClick={() => handleSelectCall({ title: 'Make a video call', type: 'make' }, true,)} className='border p-2'><p>Make Video call</p></div>
-                        <div onClick={() => handleSelectCall({ title: 'Join a video call', type: 'join' }, true)} className='border p-2'><p>Join Video call</p></div>
+                        <div onClick={() => handleSelectCall({ title: 'Make a video call', type: 'make', callingType: 'video' }, true,)} className='border p-2'><p>Make Video call</p></div>
+                        <div onClick={() => handleSelectCall({ title: 'Join a video call', type: 'join', callingType: 'video' }, true)} className='border p-2'><p>Join Video call</p></div>
                     </div>
                 </div>
                 <div
@@ -69,8 +77,8 @@ function Home(props) {
                     <p class="text-xl font-medium text-slate-700 mt-3">Audio Call</p>
                     <p class="mt-2 text-sm text-slate-500">Know where you stand and what next to do to succeed .</p>
                     <div className='flex my-2  p-3 justify-around w-full'>
-                        <div onClick={() => handleSelectCall({ title: 'Make a Audio call', type: 'make' }, true)} className='border p-2'><p>Make Audio call</p></div>
-                        <div onClick={() => handleSelectCall({ title: 'Make a Audio call', type: 'join' }, true)} className='border p-2'><p>Join Audio call</p></div>
+                        <div onClick={() => handleSelectCall({ title: 'Make a Audio call', type: 'make', callingType: 'audio' }, true)} className='border p-2'><p>Make Audio call</p></div>
+                        <div onClick={() => handleSelectCall({ title: 'Make a Audio call', type: 'join', callingType: 'audio' }, true)} className='border p-2'><p>Join Audio call</p></div>
                     </div>
                 </div>
             </div>

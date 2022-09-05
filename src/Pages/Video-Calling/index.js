@@ -1,8 +1,12 @@
 import React, { useEffect } from 'react';
 import { configurationObj } from '../../config/config';
 import { zegoInstance } from '../../utils/zego-config';
+import { useLocation } from 'react-router-dom';
 
 function VideoCalling(props) {
+
+    const { state } = useLocation()
+    console.log("state", state)
 
     const users = [1]
 
@@ -68,6 +72,13 @@ function VideoCalling(props) {
                 objectFit: "cover",
                 enableAutoplayDialog: true,
             })
+            const remoteStream = await instance.startPlayingStream(configurationObj.videoCallingConfigObj.streamId, {});
+            console.log("remoteStream", remoteStream)
+            const remoteView = instance.createRemoteStreamView(remoteStream);
+            remoteView.play("remote-video-streaming-container", {
+                objectFit: "cover",
+                enableAutoplayDialog: true,
+            })
         } catch (error) {
             console.log(error)
         }
@@ -75,6 +86,16 @@ function VideoCalling(props) {
 
     useEffect(() => {
         createRoom()
+    }, [])
+
+    useEffect(() => {
+        // const remoteStream = await instance.startPlayingStream(configurationObj.videoCallingConfigObj.streamId, {});
+        // console.log("remoteStream", remoteStream)
+        // const remoteView = instance.createRemoteStreamView(remoteStream);
+        // remoteView.play("remote-video-streaming-container", {
+        //     objectFit: "cover",
+        //     enableAutoplayDialog: true,
+        // })
     }, [])
 
     return (
@@ -142,6 +163,12 @@ function VideoCalling(props) {
                 width: '500px',
                 border: 'solid',
             }} id='local-video-streaming-container' />
+
+            <div style={{
+                height: '500px',
+                width: '500px',
+                border: 'solid',
+            }} id='remote-video-streaming-container' />
         </div >
     );
 }
