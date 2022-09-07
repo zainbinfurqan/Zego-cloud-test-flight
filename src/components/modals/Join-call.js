@@ -18,6 +18,7 @@ function JoinCall(props) {
     // const [state, dispatch] = useReducer(reducer, initialState);
 
     const [configObj, setConfigObj] = useState({
+        streamId: props.type == 'make' ? Array(9).fill().map(() => ((Math.random() * 36) | 0).toString(36)).join('') : '',
         roomId: props.type == 'make' ? Array(9).fill().map(() => ((Math.random() * 36) | 0).toString(36)).join('') : '',
     })
 
@@ -43,6 +44,16 @@ function JoinCall(props) {
                                 placeholder="placeholder"
                             />
                         </div>
+                        <div className='border my-2'>
+                            <input
+                                onChange={(e) => handleTextChange('roomId', e.target.value)}
+                                disabled={props.type == 'make' ? true : false}
+                                value={configObj.roomId}
+                                type="text"
+                                className="w-full  leading-normal  border-0 h-10 border-grey-light rounded rounded-l-none px-3 self-center relative  font-roboto text-xl outline-none"
+                                placeholder="placeholder"
+                            />
+                        </div>
                         {/* <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 -m-1 flex items-center text-red-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg> */}
@@ -56,7 +67,7 @@ function JoinCall(props) {
                         <button onClick={props.handleClose} className="mb-2 md:mb-0 bg-white px-5 py-2 text-sm shadow-sm font-medium tracking-wider border text-gray-600 rounded-full hover:shadow-lg hover:bg-gray-100">
                             Cancel
                         </button>
-                        <button onClick={() => props.handleJoinOrCreate({ roomId: configObj.roomId, roomType: props.type, callingType: props.callingType })} className="mb-2 md:mb-0 bg-red-500 border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
+                        <button onClick={() => props.handleJoinOrCreate({ streamId: configObj.streamId, roomId: configObj.roomId, roomType: props.type, callingType: props.callingType })} className="mb-2 md:mb-0 bg-red-500 border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
                             {props.type == 'make' ? 'Create' : 'Join'}
                         </button>
                     </div>

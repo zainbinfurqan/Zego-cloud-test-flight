@@ -29,7 +29,7 @@ function Home(props) {
             //     state: { ...data }
             // })
             history(data.callingType == 'video' ? '/calling-video' : '/calling-audio', { state: { ...data } })
-            // setRoomAndTokenInLocal(data)
+            setRoomAndTokenInLocal(data)
             setIsJoinCallPanelOpen(!isJoinCallPanelOpen)
         }
     }
