@@ -10,7 +10,7 @@ function VideoCalling(props) {
     const instance = zegoInstance()
     const zegoCloudCallingConfig = LocalStorageFN.getFromLocalStorage('zego-room-config')
     const auth = LocalStorageFN.getFromLocalStorage('auth-credits')
-    const users = [1]
+    const joinUsers = [1, 2]
     console.log("zegoCloudCallingConfig", zegoCloudCallingConfig)
 
     const createRoom = async () => {
@@ -85,13 +85,8 @@ function VideoCalling(props) {
                     enableAutoplayDialog: true,
                 })
 
-                const remoteStream = await instance.startPlayingStream(zegoCloudCallingConfig.streamId, {});
-                console.log("remoteStream", remoteStream)
-                const remoteView = instance.createRemoteStreamView(remoteStream);
-                remoteView.play("remote-video-streaming-container", {
-                    objectFit: "cover",
-                    enableAutoplayDialog: true,
-                })
+                otherJoin(0)
+                otherJoin(1)
             }
         } catch (error) {
             console.log(error)
@@ -102,15 +97,15 @@ function VideoCalling(props) {
         createRoom()
     }, [])
 
-    useEffect(() => {
-        // const remoteStream = await instance.startPlayingStream(configurationObj.videoCallingConfigObj.streamId, {});
-        // console.log("remoteStream", remoteStream)
-        // const remoteView = instance.createRemoteStreamView(remoteStream);
-        // remoteView.play("remote-video-streaming-container", {
-        //     objectFit: "cover",
-        //     enableAutoplayDialog: true,
-        // })
-    }, [])
+    const otherJoin = async (id) => {
+        const remoteStream = await instance.startPlayingStream(zegoCloudCallingConfig.streamId, {});
+        console.log("remoteStream", remoteStream)
+        const remoteView = instance.createRemoteStreamView(remoteStream);
+        remoteView.play(`remote-video-streaming-container-${id}`, {
+            objectFit: "cover",
+            enableAutoplayDialog: true,
+        })
+    }
 
     return (
         <div className='h-screen'>
@@ -120,7 +115,7 @@ function VideoCalling(props) {
                 zIndex: '1000',
                 bottom: '0',
                 margin: '20px 0px',
-            }} className='border p-3 text-center'>
+            }} className='border p-3 bg-slate-300 text-center'>
                 <button onClick={props.handleJoin} className="mb-2 mx-2 md:mb-0  border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -169,18 +164,20 @@ function VideoCalling(props) {
                     </svg>
                 </button>
             </div>
-            <div className="flex">
-                <div style={{
-                    height: '500px',
-                    width: '500px',
-                    border: 'solid',
+            <div className="flex flex-wrap h-screen">
+                <div className={`${joinUsers.length === 0 ? 'w-full h-fit' : 'w-1/2 h-1/2'} border`} style={{
+                    // height: '500px',
+                    // width: '500px',
+                    // border: 'solid',
                 }} id='local-video-streaming-container' />
-
-                <div style={{
-                    height: '500px',
-                    width: '500px',
-                    border: 'solid',
-                }} id='remote-video-streaming-container' />
+                {joinUsers.length > 0 &&
+                    joinUsers.map((item, index) => {
+                        return <div className='w-1/2 h-1/2 border' style={{
+                            // height: '500px',
+                            // width: '500px',
+                            // border: 'solid',
+                        }} id={`remote-video-streaming-container-${index}`} />
+                    })}
             </div>
         </div >
     );
