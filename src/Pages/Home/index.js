@@ -12,6 +12,7 @@ function Home(props) {
         setJoinCallPanelProps(obj)
         setIsJoinCallPanelOpen(flag)
     }
+    const credentials = LocalStorageFN.getFromLocalStorage('auth-credits')
 
     const handleJoinOrCreate = async (data) => {
         console.log("data", data)
@@ -28,18 +29,22 @@ function Home(props) {
             //     pathname: data.type == 'make' ? '/calling-video' : 'calling-audio',
             //     state: { ...data }
             // })
+            LocalStorageFN.addToLocalStorage('zego-room-config', {
+                ...data,
+                token: '04AAAAAGMaCPkAEDEwMnZrdGkzeGZncGphMGcAoGeNzU39OsNhrOYIq2/aT8efWkqRxAvvTA+fH5UdaVG/dFSvduLBhIVdDh6vsLyY3AMjyza3NZYi1XnaFGcoo58uPwYS7iveFzEJe6+YAtlELI+ObZ3NEboP/EG2Op5f79CWBw5fow/6k2G2mkJws9odllICD6qUcMYKeMJo2RNenWAK9Wejxr5Uh+OjGtG8+nSUE+O+Qh4ZkMYbo7vyZAU='
+            })
             history(data.callingType == 'video' ? '/calling-video' : '/calling-audio', { state: { ...data } })
-            setRoomAndTokenInLocal(data)
+            // setRoomAndTokenInLocal(data)
             setIsJoinCallPanelOpen(!isJoinCallPanelOpen)
         }
     }
 
-    const setRoomAndTokenInLocal = (data) => {
-        LocalStorageFN.addToLocalStorage('zego-room-id', { roomId: data.roomId, token: data.token })
-    }
+    // const setRoomAndTokenInLocal = (data) => {
+    //     LocalStorageFN.addToLocalStorage('zego-room-id', { roomId: data.roomId, token: data.token })
+    // }
 
     return (
-        <div class="px-3 md:lg:xl:px-40   border-t border-b py-20 bg-opacity-10">
+        <div class="px-3 md:lg:xl:px-40  py-20 bg-opacity-10">
             {isJoinCallPanelOpen && <JoinCall
                 handleClose={() => setIsJoinCallPanelOpen(!isJoinCallPanelOpen)}
                 handleJoinOrCreate={handleJoinOrCreate}
@@ -48,7 +53,7 @@ function Home(props) {
                 title={joinCallPanelProps.title} />}
             <div class="grid grid-cols-1 md:lg:xl:grid-cols-2 group bg-white shadow-xl shadow-neutral-100  ">
                 <div
-                    class="p-10 flex flex-col items-center text-center group md:lg:xl:border-r md:lg:xl:border-b hover:bg-slate-50 cursor-pointer">
+                    class="p-10 flex flex-col items-center text-center group md:lg:xl:border-r md:lg:xl:border-b hover:bg-slate-50 ">
                     <span class="p-5 rounded-full bg-red-500 text-white shadow-lg shadow-red-200"><svg
                         xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="1.5">
@@ -59,8 +64,10 @@ function Home(props) {
                     <p class="mt-2 text-sm text-slate-500">Team BrainEdge education is a bunch of highly focused, energetic
                         set of people.</p>
                     <div className='flex my-2 p-3 justify-around w-full'>
-                        <div onClick={() => handleSelectCall({ title: 'Make a video call', type: 'make', callingType: 'video' }, true,)} className='border p-2'><p>Make Video call</p></div>
-                        <div onClick={() => handleSelectCall({ title: 'Join a video call', type: 'join', callingType: 'video' }, true)} className='border p-2'><p>Join Video call</p></div>
+                        <div onClick={() => handleSelectCall({ title: 'Make a video call', type: 'make', callingType: 'video' }, true,)}
+                            className='cursor-pointer border p-2'><p>Make Video call</p></div>
+                        <div onClick={() => handleSelectCall({ title: 'Join a video call', type: 'join', callingType: 'video' }, true)}
+                            className='cursor-pointer border p-2'><p>Join Video call</p></div>
                     </div>
                 </div>
                 <div
@@ -77,8 +84,12 @@ function Home(props) {
                     <p class="text-xl font-medium text-slate-700 mt-3">Audio Call</p>
                     <p class="mt-2 text-sm text-slate-500">Know where you stand and what next to do to succeed .</p>
                     <div className='flex my-2  p-3 justify-around w-full'>
-                        <div onClick={() => handleSelectCall({ title: 'Make a Audio call', type: 'make', callingType: 'audio' }, true)} className='border p-2'><p>Make Audio call</p></div>
-                        <div onClick={() => handleSelectCall({ title: 'Make a Audio call', type: 'join', callingType: 'audio' }, true)} className='border p-2'><p>Join Audio call</p></div>
+                        <div
+                            onClick={() => handleSelectCall({ title: 'Make a Audio call', type: 'make', callingType: 'audio' }, true)}
+                            className='cursor-pointer border p-2'><p>Make Audio call</p></div>
+                        <div
+                            onClick={() => handleSelectCall({ title: 'Make a Audio call', type: 'join', callingType: 'audio' }, true)}
+                            className='cursor-pointer border p-2'><p>Join Audio call</p></div>
                     </div>
                 </div>
             </div>

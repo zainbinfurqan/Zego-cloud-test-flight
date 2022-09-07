@@ -1,6 +1,6 @@
 export const authMiddleware = {
 
-    loginAndRegistration: async () => {
+    loginAndRegistration: async (data,history) => {
         try {
             const response = await fetch('', {
                 method: 'POST',
