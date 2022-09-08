@@ -11,8 +11,8 @@ function VideoCalling(props) {
     const zegoCloudCallingConfig = LocalStorageFN.getFromLocalStorage('zego-room-config')
     const auth = LocalStorageFN.getFromLocalStorage('auth-credits')
     console.log("auth", auth)
-    const joinUsers = [1, 2]
-    console.log("zegoCloudCallingConfig", zegoCloudCallingConfig)
+    const joinUsers = []
+        console.log("zegoCloudCallingConfig", zegoCloudCallingConfig)
 
     const createRoom = async () => {
 

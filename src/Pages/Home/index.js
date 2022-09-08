@@ -21,7 +21,7 @@ function Home(props) {
         if (data.roomType == 'make') {
             tokenResponse = await authMiddleware.generateTokenForCalling(data, history)
         } else {
-            // tokenResponse = await authMiddleware.getTokenByRoomId()
+            tokenResponse = await authMiddleware.getTokenByRoomId(data, history)
             // data.token = tokenResponse.token
         }
         if (tokenResponse) {

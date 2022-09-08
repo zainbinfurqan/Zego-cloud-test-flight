@@ -41,23 +41,28 @@ export const authMiddleware = {
             } else {
                 return false
             }
-            return true
         } catch (error) {
 
         }
     },
-    getTokenByRoomId: async () => {
+    getTokenByRoomId: async (data, history) => {
         try {
-            // const response = await fetch('', {
-            //     method: 'POST',
-            // });
-            // const res = await response.json();
-            // if (response.status === 200) {
-            //     return true
-            // } else {
-            //     return false
-            // }
-            return true
+            const response = await fetch('http://localhost:3001/auth/getcallingtokenbyroomid', {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+            const res = await response.json();
+            if (response.status === 200) {
+                console.log(res)
+                LocalStorageFN.addToLocalStorage('zego-room-config', {
+                    ...data,
+                    token: res.data.token
+                })
+                return true
+            } else {
+                return false
+            }
         } catch (error) {
 
         }

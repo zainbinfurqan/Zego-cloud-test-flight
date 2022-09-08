@@ -1,4 +1,5 @@
 const User = require('../modals/users')
+const Room = require('../modals/rooms')
 const mongoose = require('mongoose')
 const { generateToken, comparePassword, generatePassword } = require('../utils/tokens-generator');
 const { generateToken04 } = require('../utils/zego-token');
@@ -75,9 +76,9 @@ module.exports = {
 
     zegoGenerateTokenForCreateCalling: async (req, res) => {
         try {
-            console.log(req.body)
             const token = generateToken04(716494437, req.body.userId, 'e95935004ef7483b21f8dfa6c9ccb78e', 3600, '')
-            console.log("token", token)
+            const data = { ...req.body, token }
+            await Room.create(data);
             return res.status(200).json({
                 success: true,
                 isError: false,
@@ -89,11 +90,17 @@ module.exports = {
         }
     },
 
-    zegoGetTokenByRoomIdForJoinCalling: async () => {
+    zegoGetTokenByRoomIdForJoinCalling: async (req, res) => {
         try {
-
+            const getRoom = await Room.findOne({ roomId: req.body.roomId, serverId: req.body.serverId })
+            return res.status(200).json({
+                success: true,
+                isError: false,
+                data: { ...getRoom._doc },
+                message: 'get token successfully '
+            })
         } catch (error) {
-
+            console.log(error)
         }
     }
 }

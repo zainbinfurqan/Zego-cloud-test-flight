@@ -8,7 +8,7 @@ authRoute.route('/loginregister/')
     .post(authController.loginRegistration)
 
 authRoute.route('/getcallingtokenbyroomid/')
-    .get(authController.zegoGetTokenByRoomIdForJoinCalling)
+    .post(authController.zegoGetTokenByRoomIdForJoinCalling)
 
 authRoute.route('/createctokenforcalling/')
     .post(authController.zegoGenerateTokenForCreateCalling)
