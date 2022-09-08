@@ -16,25 +16,16 @@ function Home(props) {
 
     const handleJoinOrCreate = async (data) => {
         console.log("data", data)
-        const tokenResponse = true
-        if (data.type == 'make') {
-            // tokenResponse = await authMiddleware.generateTokenForCalling()
-            // data.token = tokenResponse.token
+        let tokenResponse = true
+        data.userId = credentials._id
+        if (data.roomType == 'make') {
+            tokenResponse = await authMiddleware.generateTokenForCalling(data, history)
         } else {
             // tokenResponse = await authMiddleware.getTokenByRoomId()
             // data.token = tokenResponse.token
         }
         if (tokenResponse) {
-            // history.push({
-            //     pathname: data.type == 'make' ? '/calling-video' : 'calling-audio',
-            //     state: { ...data }
-            // })
-            LocalStorageFN.addToLocalStorage('zego-room-config', {
-                ...data,
-                token: '04AAAAAGMaCPkAEDEwMnZrdGkzeGZncGphMGcAoGeNzU39OsNhrOYIq2/aT8efWkqRxAvvTA+fH5UdaVG/dFSvduLBhIVdDh6vsLyY3AMjyza3NZYi1XnaFGcoo58uPwYS7iveFzEJe6+YAtlELI+ObZ3NEboP/EG2Op5f79CWBw5fow/6k2G2mkJws9odllICD6qUcMYKeMJo2RNenWAK9Wejxr5Uh+OjGtG8+nSUE+O+Qh4ZkMYbo7vyZAU='
-            })
             history(data.callingType == 'video' ? '/calling-video' : '/calling-audio', { state: { ...data } })
-            // setRoomAndTokenInLocal(data)
             setIsJoinCallPanelOpen(!isJoinCallPanelOpen)
         }
     }
@@ -43,8 +34,17 @@ function Home(props) {
     //     LocalStorageFN.addToLocalStorage('zego-room-id', { roomId: data.roomId, token: data.token })
     // }
 
+    const handleLogout = () => {
+        LocalStorageFN.removeFromLocalStorage('zego-room-config')
+        LocalStorageFN.removeFromLocalStorage('auth-credits')
+        history('/')
+    }
+
     return (
         <div class="px-3 md:lg:xl:px-40  py-20 bg-opacity-10">
+            <div className="p-2 border w-fit my-3 cursor-pointer" onClick={handleLogout}>
+                <p>Logout</p>
+            </div>
             {isJoinCallPanelOpen && <JoinCall
                 handleClose={() => setIsJoinCallPanelOpen(!isJoinCallPanelOpen)}
                 handleJoinOrCreate={handleJoinOrCreate}

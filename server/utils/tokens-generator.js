@@ -10,5 +10,14 @@ module.exports = {
     },
     comparePassword: async (object) => {
         return await bcrypt.compare(object.password, object.passwordHash)
-    }
+    },
+    generatePassword: async (object) => {
+        try {
+            const salt = await bcrypt.genSalt(10);
+            const password = await bcrypt.hash(object.password, salt)
+            return password;
+        } catch (error) {
+
+        }
+    },
 }

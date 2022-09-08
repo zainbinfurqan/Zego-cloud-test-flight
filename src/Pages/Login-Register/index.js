@@ -46,14 +46,14 @@ function LoginRegister(props) {
 
     const handleSubmit = () => {
         // const isValidate = validation(credentials);
-        LocalStorageFN.addToLocalStorage('auth-credits',
-            {
-                name: 'zain ahmed', email: 'zainahmed@gmail.com',
-                // id: Math.floor(Math.random() * 10000)
-                id: '11111'
-            })
-        history('/home')
-        // authMiddleware.loginAndRegistration(credentials, history);
+        // LocalStorageFN.addToLocalStorage('auth-credits',
+        //     {
+        //         name: 'zain ahmed', email: 'zainahmed@gmail.com',
+        //         // id: Math.floor(Math.random() * 10000)
+        //         id: '11111'
+        //     })
+        // history('/home')
+        authMiddleware.loginAndRegistration(credentials, history);
     }
 
     return (

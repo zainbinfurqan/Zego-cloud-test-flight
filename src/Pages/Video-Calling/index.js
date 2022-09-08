@@ -10,6 +10,7 @@ function VideoCalling(props) {
     const instance = zegoInstance()
     const zegoCloudCallingConfig = LocalStorageFN.getFromLocalStorage('zego-room-config')
     const auth = LocalStorageFN.getFromLocalStorage('auth-credits')
+    console.log("auth", auth)
     const joinUsers = [1, 2]
     console.log("zegoCloudCallingConfig", zegoCloudCallingConfig)
 
@@ -27,8 +28,8 @@ function VideoCalling(props) {
                         zegoCloudCallingConfig.roomId,
                         zegoCloudCallingConfig.token,
                         {
-                            userID: String(auth.id),
-                            userName: auth.name
+                            userID: String(auth._id),
+                            userName: auth.email
                         });
 
                 } catch (error) {
