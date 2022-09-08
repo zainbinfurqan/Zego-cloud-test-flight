@@ -5,12 +5,12 @@ const authRoute = require('express').Router()
 const authController = require('../controller/auth')
 
 authRoute.route('/loginregister/')
-    .post(authController.signUpByUserName)
+    .post(authController.loginRegistration)
 
 authRoute.route('/getcallingtokenbyroomid/')
-    .get(authController.signUpByUserName)
+    .get(authController.zegoGetTokenByRoomIdForJoinCalling)
 
 authRoute.route('/createctokenforcalling/')
-    .post(authController.signUpByUserName)
+    .post(authController.zegoGenerateTokenForCreateCalling)
 
 module.exports = authRoute

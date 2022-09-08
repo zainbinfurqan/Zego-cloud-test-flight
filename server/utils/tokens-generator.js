@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt')
 
 module.exports = {
     generateToken: async (data, secretKey, expireDate) => {
@@ -7,4 +8,7 @@ module.exports = {
             data: data
         }, secretKey);
     },
+    comparePassword: async (object) => {
+        return await bcrypt.compare(object.password, object.passwordHash)
+    }
 }
