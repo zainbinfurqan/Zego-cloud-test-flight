@@ -26,14 +26,22 @@ function JoinCall(props) {
         setConfigObj({ ...configObj, [key]: value })
     }
 
+    const copyConfigKeys = () => {
+        const node = document.getElementById('config-keys');
+        navigator.clipboard.writeText(node.textContent)
+    }
     return (
         <div className="min-w-screen h-screen animated fadeIn faster  fixed  left-0 top-0 flex justify-center items-center inset-0 z-50 outline-none focus:outline-none bg-no-repeat bg-center bg-cover"
             id="modal-id">
+            <p className='hidden' id="config-keys">streamID : {configObj.streamId} RoomID : {configObj.roomId}</p>
             <div className="absolute bg-black opacity-80 inset-0 z-0"></div>
             <div className="w-full  max-w-lg p-5 relative mx-auto my-auto rounded-xl shadow-lg  bg-white ">
                 <h2 className='text-3xl text-center font-medium'>{props.title}</h2>
                 <div className="">
-                    <p className="text-base py-2">Please copy streamId and RoomId</p>
+                    <div className='flex'>
+                        <p className="text-base py-2 text-sm px-2">Please copy streamId and RoomId</p>
+                        <p className='border p-2 w-fit cursor-pointer' onClick={copyConfigKeys}>Copy!</p>
+                    </div>
                     <div class="bg-white shadow w-full rounded-lg divide-y divide-gray-200">
                         <div class="px-5 py-7">
                             <label class="font-semibold text-sm text-gray-600 pb-1 block">Stream ID</label>

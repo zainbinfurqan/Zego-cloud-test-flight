@@ -12,7 +12,7 @@ function VideoCalling(props) {
     const auth = LocalStorageFN.getFromLocalStorage('auth-credits')
     console.log("auth", auth)
     const joinUsers = []
-        console.log("zegoCloudCallingConfig", zegoCloudCallingConfig)
+    console.log("zegoCloudCallingConfig", zegoCloudCallingConfig)
 
     const createRoom = async () => {
 
@@ -45,7 +45,6 @@ function VideoCalling(props) {
                     );
                 });
 
-                // Callback for updates on the status of the streams in the room.
                 instance.on('roomStreamUpdate', async (roomID, updateType, streamList, extendedData) => {
                     if (updateType == 'ADD') {
                         // New stream added, start playing the stream. 
@@ -53,11 +52,6 @@ function VideoCalling(props) {
                         // Stream deleted, stop playing the stream.
                     }
                 });
-
-
-
-                console.log("microphones", deviceInfo.microphones)
-                console.log("cameras", deviceInfo.cameras)
 
                 const localStream = await instance.createStream({
                     camera: {
@@ -67,27 +61,19 @@ function VideoCalling(props) {
                         audio: true,
                     }
                 });
-                // Get the audio tag.
                 const localVideo = document.getElementById('local-video-streaming-container');
-                // const localAudio = document.getElementById('local-audio');
-                // The local stream is a MediaStream object. You can render audio by assigning the local stream to the srcObject property of video or audio.
-                // localVideo.srcObject = localStream;
-                // console.log("localStream", localStream)
                 instance.startPublishingStream(zegoCloudCallingConfig.streamId,
                     localStream,
                     { videoCodec: 'VP8' })
-                // console.log("instance.getVersion()", instance.getVersion())
-                // const localView = instance.createLocalStreamView()
                 const localView = instance.createLocalStreamView(localStream);
-                // console.log("localView", localView)
                 localView.play("local-video-streaming-container", {
                     mirror: true,
                     objectFit: "cover",
                     enableAutoplayDialog: true,
                 })
 
-                otherJoin(0)
-                otherJoin(1)
+                // otherJoin(0)
+                // otherJoin(1)
             }
         } catch (error) {
             console.log(error)

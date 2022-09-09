@@ -2,15 +2,17 @@ import React, { useEffect } from 'react';
 import { configurationObj } from '../../config/config';
 import { zegoInstance } from '../../utils/zego-config';
 import { useLocation } from 'react-router-dom';
+import { LocalStorageFN } from '../../utils/localstorage';
 
 function AudioCalling(props) {
 
     const { state } = useLocation()
-    console.log("state", state)
-
-    const users = [1]
-
     const instance = zegoInstance()
+    const zegoCloudCallingConfig = LocalStorageFN.getFromLocalStorage('zego-room-config')
+    const auth = LocalStorageFN.getFromLocalStorage('auth-credits')
+    console.log("auth", auth)
+    const joinUsers = []
+    console.log("zegoCloudCallingConfig", zegoCloudCallingConfig)
 
     const createRoom = async () => {
         try {
@@ -54,18 +56,10 @@ function AudioCalling(props) {
                     audio: true,
                 }
             });
-            // Get the audio tag.
             const localVideo = document.getElementById('local-video-streaming-container');
-            // const localAudio = document.getElementById('local-audio');
-            // The local stream is a MediaStream object. You can render audio by assigning the local stream to the srcObject property of video or audio.
-            // localVideo.srcObject = localStream;
-            // console.log("localStream", localStream)
             instance.startPublishingStream(configurationObj.videoCallingConfigObj.streamId,
                 localStream)
-            // console.log("instance.getVersion()", instance.getVersion())
-            // const localView = instance.createLocalStreamView()
             const localView = instance.createLocalStreamView(localStream);
-            // console.log("localView", localView)
             localView.play("local-video-streaming-container", {
                 enableAutoplayDialog: true,
             })
@@ -78,15 +72,6 @@ function AudioCalling(props) {
         createRoom()
     }, [])
 
-    useEffect(async () => {
-        const remoteStream = await instance.startPlayingStream(configurationObj.videoCallingConfigObj.streamId, {});
-        const remoteView = instance.createRemoteStreamView(remoteStream);
-        remoteView.play("remote-video-streaming-container", {
-            objectFit: "cover",
-            enableAutoplayDialog: true,
-        })
-    }, [])
-
     return (
         <div className='h-screen'>
             <div style={{
@@ -95,7 +80,7 @@ function AudioCalling(props) {
                 zIndex: '1000',
                 bottom: '0',
                 margin: '20px 0px',
-            }} className='border p-3 text-center'>
+            }} className='border p-3 bg-slate-300 text-center'>
                 <button onClick={props.handleJoin} className="mb-2 mx-2 md:mb-0  border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -144,16 +129,21 @@ function AudioCalling(props) {
                     </svg>
                 </button>
             </div>
-            <div style={{
-                height: '500px',
-                width: '500px',
-                border: 'solid',
-            }} id='local-video-streaming-container' />
-            <div style={{
-                height: '500px',
-                width: '500px',
-                border: 'solid',
-            }} id='remote-video-streaming-container' />
+            <div className="flex flex-wrap h-screen">
+                <div className={`${joinUsers.length === 0 ? 'w-full h-fit' : 'w-1/2 h-1/2'} border`} style={{
+                    // height: '500px',
+                    // width: '500px',
+                    // border: 'solid',
+                }} id='local-video-streaming-container' />
+                {joinUsers.length > 0 &&
+                    joinUsers.map((item, index) => {
+                        return <div className='w-1/2 h-1/2 border' style={{
+                            // height: '500px',
+                            // width: '500px',
+                            // border: 'solid',
+                        }} id={`remote-video-streaming-container-${index}`} />
+                    })}
+            </div>
         </div >
     );
 }
