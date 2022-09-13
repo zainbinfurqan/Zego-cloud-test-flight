@@ -28,7 +28,6 @@ function LoginRegister(props) {
     })
 
     const handleTextChanges = (key, value) => {
-        console.log(value)
         setCredentials({ ...credentials, [key]: value })
     }
 

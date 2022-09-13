@@ -8,11 +8,15 @@ function AudioCalling(props) {
 
     const { state } = useLocation()
     const instance = zegoInstance()
-    const zegoCloudCallingConfig = LocalStorageFN.getFromLocalStorage('zego-room-config')
     const auth = LocalStorageFN.getFromLocalStorage('auth-credits')
-    console.log("auth", auth)
     const joinUsers = []
-    console.log("zegoCloudCallingConfig", zegoCloudCallingConfig)
+
+    let localStream = null
+
+    useEffect(() => {
+        createRoom()
+    }, [])
+
 
     const createRoom = async () => {
         try {
@@ -25,7 +29,6 @@ function AudioCalling(props) {
                     userName: configurationObj.videoCallingConfigObj.userName
                 });
 
-            // console.log("streamRoom", streamRoom)
 
             instance.on('roomUserUpdate', (roomID, updateType, userList) => {
                 console.warn(
@@ -45,10 +48,7 @@ function AudioCalling(props) {
 
             const deviceInfo = await instance.enumDevices()
 
-            // console.log("microphones", deviceInfo.microphones[0])
-            // console.log("cameras", deviceInfo.cameras[0])
-
-            const localStream = await instance.createStream({
+            localStream = await instance.createStream({
                 camera: {
                     audioInput: deviceInfo.microphones[0].deviceID,
                     videoInput: 0,
@@ -68,9 +68,22 @@ function AudioCalling(props) {
         }
     }
 
-    useEffect(() => {
-        createRoom()
-    }, [])
+    async function stopPlayingStream(streamId) {
+        instance.stopPlayingStream(streamId);
+    }
+
+    function clearStream() {
+        localStream && instance.destroyStream(localStream);
+        // $('#publishVideo')[0].srcObject = null;
+        localStream = null;
+        // $('#playVideo')[0].srcObject = null;
+        // remoteStream = null;
+    }
+
+    const handleLeave = () => {
+        stopPlayingStream(configurationObj.videoCallingConfigObj.streamId)
+        clearStream();
+    }
 
     return (
         <div className='h-screen'>
@@ -81,7 +94,7 @@ function AudioCalling(props) {
                 bottom: '0',
                 margin: '20px 0px',
             }} className='border p-3 bg-slate-300 text-center'>
-                <button onClick={props.handleJoin} className="mb-2 mx-2 md:mb-0  border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
+                <button onClick={handleLeave} className="mb-2 mx-2 md:mb-0  border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height={15}
@@ -95,7 +108,7 @@ function AudioCalling(props) {
                         <path d="M51.707 8.293a.999.999 0 0 0-1.414 0l-42 42a.999.999 0 1 0 1.414 1.414l42-42a.999.999 0 0 0 0-1.414zM52.841 10.561 42 21.402v27.491A3.11 3.11 0 0 1 38.893 52c-.547 0-1.09-.149-1.571-.432a.967.967 0 0 1-.174-.131L24.106 39.296 10.561 52.841C15.982 57.469 22.795 60 30 60c8.013 0 15.547-3.121 21.213-8.787S60 38.013 60 30c0-7.205-2.531-14.018-7.159-19.439zM15.104 39A3.108 3.108 0 0 1 12 35.896V23.104A3.108 3.108 0 0 1 15.104 20h8.324c.166 0 .329-.037.479-.109L37.148 7.563c.053-.05.112-.094.174-.131A3.102 3.102 0 0 1 38.893 7 3.11 3.11 0 0 1 42 10.106v4.479l7.433-7.432C44.013 2.529 37.203 0 30 0 21.987 0 14.453 3.121 8.787 8.787S0 21.987 0 30c0 7.202 2.528 14.013 7.153 19.432L17.586 39h-2.482z" />
                     </svg>
                 </button>
-                <button onClick={props.handleJoin} className="mb-2 mx-2 md:mb-0  border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
+                <button onClick={handleLeave} className="mb-2 mx-2 md:mb-0  border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height={15}
@@ -109,7 +122,7 @@ function AudioCalling(props) {
                         <path d="M150.005 0C67.164 0 .001 67.159.001 150c0 82.838 67.162 150.003 150.003 150.003S300.002 232.838 300.002 150c0-82.841-67.158-150-149.997-150zm47.24 100.506 27.358-15.793a6.438 6.438 0 0 1 6.44 11.15l-27.358 15.795a6.438 6.438 0 0 1-8.795-2.355 6.444 6.444 0 0 1 2.355-8.797zm-31.38 124.118a10.104 10.104 0 0 1-10.66-1.131L122.04 197.51a19.959 19.959 0 0 1-4.796.607H84.01c-10.898 0-19.735-8.836-19.735-19.732v-57.56c0-10.896 8.837-19.735 19.735-19.735h33.235c1.932 0 3.792.29 5.561.809l32.397-25.389a10.112 10.112 0 0 1 10.66-1.131 10.106 10.106 0 0 1 5.683 9.088v131.069h.002a10.113 10.113 0 0 1-5.683 9.088zm68.372-11.241a6.435 6.435 0 0 1-8.795 2.355l-27.358-15.793a6.443 6.443 0 0 1-2.355-8.798 6.436 6.436 0 0 1 8.795-2.355l27.358 15.795c3.079 1.775 4.129 5.712 2.355 8.796zm-3.104-56.588H199.55a6.435 6.435 0 0 1-6.437-6.437 6.436 6.436 0 0 1 6.437-6.437h31.585a6.436 6.436 0 0 1 6.437 6.437 6.436 6.436 0 0 1-6.439 6.437z" />
                     </svg>
                 </button>
-                <button onClick={props.handleJoin} className="mb-2 mx-2 md:mb-0 bg-red-500 border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
+                <button onClick={handleLeave} className="mb-2 mx-2 md:mb-0 bg-red-500 border border-red-500 px-5 py-2 text-sm shadow-sm font-medium tracking-wider text-white rounded-full hover:shadow-lg hover:bg-red-600">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         height={15}
